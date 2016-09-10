@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    display: table;
+    width: 100vw;
+    height: 100vh;
+}
+
+.centered {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+canvas {
+    display: inline-block;
+}
+
+#controls {
+    margin-left: 15px;
+    width: 300px;
+    height: 500px;
+    display: inline-block;
+}

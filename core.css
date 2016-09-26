@@ -15,8 +15,10 @@ body {
     vertical-align: middle;
 }
 
-canvas {
+#canvas {
     display: inline-block;
+    background-color: lightgrey;
+    cursor: pointer;
 }
 
 #controls {

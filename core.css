@@ -80,9 +80,9 @@ body {
 #controls .container {
     flex-grow: 1;
     overflow-y: scroll;
-    visibility: hidden;
-    margin-right: -20px;
-    padding-right: 5px;
+    visibility: visible;
+    margin-right: -30px;
+    padding-right: 15px;
 }
 
 #arms {

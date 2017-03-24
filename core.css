@@ -18,7 +18,7 @@ body {
     display: inline-block;
     max-width: 500px;
     max-height: 500px;
-    transition: 2s transform ease;
+    transition: 1s transform ease;
 }
 
 #wrapper.centered {
@@ -70,7 +70,7 @@ body {
     border-bottom-right-radius: 10px;
     display: flex;
     flex-direction: column;
-    transition: 2s transform ease;
+    transition: 1s transform ease;
 }
 
 #controls.centered {
@@ -79,17 +79,62 @@ body {
 
 #controls .container {
     flex-grow: 1;
-    margin: 0 9px;
     overflow-y: scroll;
+    visibility: hidden;
+    margin-right: -20px;
+    padding-right: 5px;
 }
 
-#arms {  }
+#arms {
+    visibility: visible;
+    width: 100%;
+}
 
-.arm {
+.arm, #add {
+    margin: 0 9px;
     margin-bottom: 6px;
     padding: 5px;
     border-radius: 4px;
     background-color: lightgray;
+}
+
+.arm .controls {
+    vertical-align: text-top;
+}
+
+.arm .header {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.arm .menubar span {
+    display: inline-block;
+    margin-top: -2px;
+    cursor: pointer;
+}
+
+.arm .menubar .remove {
+    margin-left: 7px;
+}
+
+.arm .menubar .dropdown {
+    transform: rotate(90deg);
+    padding: 0 6px;
+}
+
+.arm .controls label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.arm .controls input {
+    width: 98%;
+    margin-bottom: 4px;
+}
+
+#arms #add {
+    text-align: center;
 }
 
 span.title, span.help {

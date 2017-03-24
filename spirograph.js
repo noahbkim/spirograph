@@ -1,113 +1,141 @@
 function gcd(a, b) { return !b ? a : gcd(b, a % b); }
 function lcm(a, b) { return (a * b) / gcd(a, b); }
-function resize(array, length, fill) {
-    var resized = new Array(length);
-    for (var i = 0; i < length; i++) {
-        if (i < array.length) resized[i] = array[i];
-        else resized[i] = fill || 0;
+
+class Arm {
+
+    constructor(length, velocity) {
+        this.length = length || 20;
+        this.velocity = velocity;
+        this.angle = 0;
     }
-    return resized;
+
+    reset() {
+        this.angle = 0;
+    }
+
+    toHTML() {
+        let div = document.createElement("div");
+        div.classList.add("arm");
+
+        return div;
+    }
+
 }
 
-function Engine(canvas) {
-    
-    var context = canvas.getContext("2d");
-    this.points = [];
-    
-    this.count = 1;
-    this.velocities = [0];
-    this.angles = [0];
-    this.lengths = [20]
-        
-    this.completion = 0;
-    this.current = 0;
-    
-    var x, y;
-    
-    // LCM {LCM a 360} {LCM b 360} {LCM c 360}  
-    
-    this.setCount = function(n) {
-        this.count = n;
-        this.velocities = resize(this.velocities, n);
-        this.angles = resize(this.angles, n);
-        this.lengths = resize(this.lengths, n, 20);
-    }
-    
-    this.setVelocities = function(v) {
-        this.reset();
-        var gcds = [];
-        for (var i = 0; i < this.count; i++) {
-            this.velocities[i] = v[i];
-            gcds[i] = 360 / gcd(v[i] || 0, 360);
-        }
-        this.completion = gcds.reduce(lcm) + 1;
-    }
-    
-    this.reset = function() {
+class Engine {
+
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d");
+        this.points = [];
+        this.arms = [];
+        this.precision = 2;
+        this.independent = false;
+        this.completion = 0;
         this.current = 0;
-        this.clear();
-        for (var i = 0; i < this.count; i++) {
-            this.velocities[i] = 1;
-            this.angles[i] = 0;
-            this.lengths[i] = 20;
-        }
+        this.paused = false;
     }
-    
-    this.clear = function() {
+
+    /* Add an arm to the spirograph. */
+    add(l, v) {
+        this.pause();
+        this.count += 1;
+        let arm = new Arm(l, v);
+        this.arms.push(arm);
+        this.reset();
+        return arm;
+    }
+
+    /* Modify an arm of the spirograph. */
+    modify(i, l, v) {
+        this.pause();
+        this.arms[i].length = l || this.arms[i].length;
+        this.arms[i].velocity = v || this.arms[i].velocity;
+        this.reset();
+    }
+
+    /* Remove an arm of the spirograph. */
+    remove() {
+        this.pause();
+        if (this.count <= 1) return;
+        this.count -= 1;
+        this.arms.pop();
+        this.reset();
+    }
+
+    pause() { this.paused = true; }
+    play() { this.paused = false; }
+
+    /* Clear the spirograph. */
+    clear() {
         this.points = [];
     }
-    
-    this.drawArms = function() {
+
+    /* Recalculate spirograph timing. */
+    recalculate() {
+        let gcds = [];
+        for (let i = 0; i < this.arms.length; i++)
+            gcds[i] = 360 / gcd(Math.abs(this.arms[i].velocity) || 0, 360);
+        console.log(gcds);
+        this.completion = gcds.reduce(lcm) * this.precision + 1;
+    }
+
+    /* Reset and clear the spirograph. */
+    reset() {
+        this.pause();
+        this.current = 0;
+        this.clear();
+        for (let arm of this.arms)
+            arm.reset();
+        this.recalculate();
+    }
+
+    update() {
+        for (let arm of this.arms)
+            arm.angle += arm.velocity;
+    }
+
+    drawArms(context, canvas) {
         context.beginPath();
-        x = canvas.width / 2;
-        y = canvas.height / 2;
+        let x = canvas.width / 2;
+        let y = canvas.height / 2;
         context.moveTo(x, y);
-        for (var i = 0; i < this.count; i++) {
-            var angle = this.angles[i];
-            var length = this.lengths[i];
+        for (let arm of this.arms) {
+            let angle = arm.angle / this.precision;
+            let length = arm.length;
             x += length * Math.cos(angle * Math.PI / 180);
             y += length * Math.sin(angle * Math.PI / 180);
             context.lineTo(x, y);
         }
-        this.points.push([x, y]);  // Also writes the new point
+        this.points.push([x, y]);
         context.stroke();
     }
     
-    this.drawPoints = function() {
+    drawPoints(context, canvas) {
         context.beginPath();
         if (this.points.length <= 1) return;
-        var first = this.points[0];
+        let first = this.points[0];
         context.moveTo(first[0], first[1]);
-        for (var i = 1; i < this.points.length; i++) {
-            var next = this.points[i];
-            context.lineTo(next[0], next[1]);
-        }
+        for (let point of this.points.slice(1))
+            context.lineTo(point[0], point[1]);
         context.stroke();
     }
     
-    this.draw = function() {
-        
+    draw() {
         requestAnimationFrame(this.draw.bind(this));
-        
-        for (var i = 0; i < this.count; i++)
-            this.angles[i] += this.velocities[i];
-        
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        
-        if (this.current++ < this.completion) 
-            this.drawArms();
-        
-        this.drawPoints();
-        
+        if (!this.paused) {
+            this.update();  // Probably fine in draw loop...
+            let canvas = this.canvas;
+            let context = this.context;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            if (this.current++ < this.completion)
+                this.drawArms(context, canvas);
+            this.drawPoints(context, canvas);
+        }
+    }
+
+    start() {
+        this.draw();
     }
     
-}
-
-var engine;
-
-window.onload = function() {
-    engine = new Engine(document.getElementById("canvas"));
-    engine.setCount(3);
-    engine.setVelocities([1.5, 2.0, 2.5])
-    engine.draw();
 }

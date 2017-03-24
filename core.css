@@ -1,29 +1,117 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: sans-serif;
 }
 
-.page {
-    display: table;
+#container {
     width: 100vw;
     height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.centered {
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
+#wrapper {
+    z-index: 2;
+    position: relative;
+    display: inline-block;
+    max-width: 500px;
+    max-height: 500px;
+    transition: 2s transform ease;
+}
+
+#wrapper.centered {
+    transform: translateX(155px);
 }
 
 #canvas {
-    display: inline-block;
+    position: relative;
+    right: 0;
+    z-index: 1;
     background-color: lightgrey;
+    border-radius: 10px;
     cursor: pointer;
 }
 
-#controls {
-    margin-left: 15px;
-    width: 300px;
-    height: 500px;
-    display: inline-block;
+#menu {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0;
+    z-index: 4;
+    padding: 7px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.75s linear all;
+    transform-origin: 50% 50%;
+    animation-fill-mode: forwards;
+    backface-visibility: hidden;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
+
+#menu.centered {
+    transform: rotateZ(180deg);
+}
+
+#controls {
+    z-index: 1;
+    position: relative;
+    background-color: #EEE;
+    left: -11px;
+    padding-left: 11px;
+    width: 310px; /* Golden rectangle */
+    height: 500px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    transition: 2s transform ease;
+}
+
+#controls.centered {
+    transform: translateX(-155px);
+}
+
+#controls .container {
+    flex-grow: 1;
+    margin: 0 9px;
+    overflow-y: scroll;
+}
+
+#arms {  }
+
+.arm {
+    margin-bottom: 6px;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: lightgray;
+}
+
+span.title, span.help {
+    display: inline-block;
+    padding: 9px 10px;
+}
+
+span.help {
+    margin-top: auto;
+    display: block;
+    line-height: 140%;
+    /* font-style: italic; */
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+div.spacing {
+    padding-bottom: 5px;
+}
+
+.left { float: left; }
+.right { float: right; }
+.bottom { bottom: 0; }

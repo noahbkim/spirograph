@@ -1,16 +1,34 @@
 <html>
     <head>
+        <title>Spirograph</title>
         <link rel="stylesheet" type="text/css" href="core.css">
         <script type="text/javascript" src="spirograph.js"></script>
     </head>
     <body>
-        <div class="page">
-            <div class="centered">
+        <div id="container">
+            <div id="wrapper">
                 <canvas id="canvas" width="500" height="500"></canvas>
-                <div id="controls">
-                    
+                <span id="menu">&#x276f;</span>
+            </div>
+            <div id="controls">
+                <span class="title">
+                    Spirograph
+                    <span class="author right">Noah Kim</span>
+                </span>
+                <div class="container">
+                    <div id="arms">
+                        <div class="arm">Arm</div>
+                    </div>
                 </div>
+                <span class="help bottom">
+                    <input id="independent" type="checkbox">Arms independent<br>
+                    <input id="infinite" type="checkbox">Continue rotating<br>
+                    <!--<div class="spacing"></div>
+                    Click canvas to redraw<br>
+                    Click arrow to hide controls-->
+                </span>
             </div>
         </div>
+        <script type="text/javascript" src="controls.js"></script>
     </body>
 </html>

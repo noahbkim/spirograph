@@ -24,7 +24,7 @@ class Engine {
         this.arms = [];
         this.precision = 2;
         this.independent = true;
-        this.infinite = false;
+        this.infinite = true;
         this.paused = false;
 
         this.completion = 0;

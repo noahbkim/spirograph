@@ -105,7 +105,7 @@ body {
 }
 
 .arm .menubar span {
-    display: inline-block;
+    display: block;
     margin-top: -2px;
     cursor: pointer;
 }
@@ -116,7 +116,7 @@ body {
 
 .arm .menubar .dropdown {
     transform: rotate(90deg);
-    transition: all 1s ease;
+    transition: all 0.5s ease;
     padding: 0 6px;
 }
 
@@ -128,7 +128,7 @@ body {
     height: 95px;
     display: block;
     overflow: hidden;
-    transition: height 1s ease;
+    transition: height 0.5s ease;
 }
 
 .arm .controls.closed {

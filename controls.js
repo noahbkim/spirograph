@@ -38,7 +38,10 @@ function armToHTML(arm, number) {
     let div = document.createElement("div");
     div.classList.add("arm");
     let header = document.createElement("span");
-    header.innerHTML += "Arm " + number;
+    header.innerHTML += "Arm " + number + "&nbsp;";
+    let summary = document.createElement("span");
+    summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
+    header.appendChild(summary);
     div.appendChild(header);
 
     let menubar = document.createElement("span");
@@ -53,16 +56,21 @@ function armToHTML(arm, number) {
         let remove = document.createElement("span");
         remove.classList.add("remove");
         remove.innerHTML = "&#x2a09;";
-        remove.arm = arm;
         menubar.appendChild(remove);
         remove.addEventListener("click", function() {
-            removeArm(this.arm);
+            removeArm(arm);
         });
     }
 
     let controls = document.createElement("div");
     controls.classList.add("controls");
     div.appendChild(controls);
+
+    dropdown.controls = controls;
+    dropdown.addEventListener("click", function() {
+        this.classList.toggle("closed");
+        this.controls.classList.toggle("closed");
+    });
 
     let lengthLabel = document.createElement("label");
     lengthLabel.innerHTML = "Length: ";
@@ -76,15 +84,15 @@ function armToHTML(arm, number) {
     lengthInput.max = "50";
     lengthInput.step = "1";
     lengthInput.value = arm.length;
-    lengthInput.arm = arm;
     controls.appendChild(lengthInput);
     lengthInput.addEventListener("input", function() {
         lengthValue.innerHTML = this.value;
     });
     lengthInput.addEventListener("change", function() {
-        this.arm.length = parseInt(this.value);
+        arm.length = parseInt(this.value);
         engine.reset();
         engine.play();
+        summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
     });
 
     let velocityLabel = document.createElement("label");
@@ -95,18 +103,18 @@ function armToHTML(arm, number) {
     velocityLabel.appendChild(velocityValue);
     let velocityInput = document.createElement("input");
     velocityInput.type = "range";
-    velocityInput.min = "-3";
-    velocityInput.max = "3";
+    velocityInput.min = "-15";
+    velocityInput.max = "15";
     velocityInput.step = "0.1";
     velocityInput.value = arm.velocity;
-    velocityInput.arm = arm;
     velocityInput.addEventListener("input", function() {
         velocityValue.innerHTML = this.value;
     });
     velocityInput.addEventListener("change", function() {
-        this.arm.velocity = parseFloat(this.value);
+        arm.velocity = parseFloat(this.value);
         engine.reset();
         engine.play();
+        summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
     });
     controls.appendChild(velocityInput);
 

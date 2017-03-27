@@ -81,11 +81,13 @@ body {
     flex-grow: 1;
     overflow-y: scroll;
     visibility: visible;
-    margin-right: -30px;
-    padding-right: 15px;
+    direction: rtl;
+    margin-left: -30px;
+    padding-left: 15px;
 }
 
 #arms {
+    direction: ltr;
     visibility: visible;
     width: 100%;
 }
@@ -98,13 +100,8 @@ body {
     background-color: lightgray;
 }
 
-.arm .controls {
-    vertical-align: text-top;
-}
-
 .arm .header {
     display: block;
-    margin-bottom: 5px;
 }
 
 .arm .menubar span {
@@ -119,13 +116,33 @@ body {
 
 .arm .menubar .dropdown {
     transform: rotate(90deg);
+    transition: all 1s ease;
     padding: 0 6px;
 }
 
+.arm .menubar .dropdown.closed {
+    transform: rotate(-90deg);
+}
+
+.arm .controls {
+    height: 95px;
+    display: block;
+    overflow: hidden;
+    transition: height 1s ease;
+}
+
+.arm .controls.closed {
+    height: 0;
+}
+
 .arm .controls label {
+    margin-top: 3px;
     display: block;
     font-size: 14px;
-    margin-bottom: 2px;
+}
+
+.arm .controls label:first-of-type {
+    margin-top: 6px;
 }
 
 .arm .controls input {

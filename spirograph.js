@@ -74,6 +74,7 @@ class Engine {
     reset() {
         this.pause();
         this.current = 0;
+        this.finished = false;
         this.clear();
         this.context.clearRect(0, 0, canvas.width, canvas.height);
         for (let arm of this.arms)
@@ -116,6 +117,7 @@ class Engine {
         let canvas = this.canvas;
         let context = this.context;
         context.clearRect(0, 0, canvas.width, canvas.height);
+        this.update();
         if (!this.finished || this.infinite)
             this.drawArms(context, canvas);
         this.drawPoints(context, canvas);
@@ -132,7 +134,7 @@ class Engine {
 
     start() {
         this.draw();
-        setInterval(this.update.bind(this), 1000 / 60);
+        //setInterval(this.update.bind(this), 1000 / 60);
     }
     
 }

@@ -58,6 +58,9 @@ class Engine {
         this.completion = 0;
         this.current = 0;
 
+        /* Trail. */
+        this.trail = 0;
+
     }
 
     /* Count the number of arms. */
@@ -128,8 +131,13 @@ class Engine {
             y += length * Math.sin(angle * Math.PI / 180);
             context.lineTo(x, y);
         }
-        if (!this.finished)
+        if (!this.finished || this.trail) {
             this.points.push([x, y]);
+            if (this.trail > 0)
+                this.points.splice(0, this.points.length - this.trail);
+        } else if (this.trail > 0) {
+            this.points.splice(this.trail.length - 1, 1);
+        }
         context.stroke();
     }
     

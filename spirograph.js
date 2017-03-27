@@ -1,12 +1,23 @@
+/**
+ * Spirograph.js
+ * Noah Kim, 2017
+ * A cool tool for generating interesting spirographs.
+ */
+
+
+/* Some useful math functions. */
 function gcd(a, b) { return !b ? a : gcd(b, a % b); }
 function lcm(a, b) { return (a * b) / gcd(a, b); }
 
+
+/* A single arm in the spirograph. */
 class Arm {
 
-    constructor(length, velocity) {
-        this.length = length || 20;
+    constructor(length, velocity, angle) {
+        this.length = length;
         this.velocity = velocity;
-        this.angle = 0;
+        this.start = angle || 0;
+        this.angle = this.start;
     }
 
     reset() {
@@ -18,22 +29,65 @@ class Arm {
 class Engine {
 
     constructor(canvas) {
+
+        /* Canvas and context. */
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
-        this.points = [];
+
+        /* Drawing utilities. */
         this.arms = [];
+        this.points = [];
+
+        /* Precision of curve. Higher is more accurate. */
         this.precision = 2;
+
+        /* Arm angles are accumulated when dependent. */
         this.independent = true;
+
+        /* Continues rotating without drawing points. */
         this.infinite = true;
+
+        /* Whether drawing is paused. */
         this.paused = false;
 
+        /* Automatic termination. */
         this.completion = 0;
         this.current = 0;
-        this.finished = false;
+
     }
 
-    get count() {
-        return this.arms.length;
+    /* Count the number of arms. */
+    get count() { return this.arms.length; }
+
+    /* Get whether the spirograph has finished. */
+    get finished() { return this.current >= this.completion; }
+
+    /* Play and pause. */
+    pause() { this.paused = true; }
+    play() { this.paused = false; }
+
+    /* Clear the spirograph. */
+    clear() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.points = [];
+    }
+
+    /* Recalculate spirograph timing. */
+    recalculate() {
+        let gcds = [];
+        for (let i = 0; i < this.arms.length; i++)
+            gcds[i] = 360 / gcd(Math.abs(this.arms[i].velocity) || 0, 360);
+        this.completion = gcds.reduce(lcm) * this.precision + 2;
+    }
+
+    /* Reset and clear the spirograph. */
+    reset() {
+        this.pause();
+        this.clear();
+        this.current = 0;
+        for (let arm of this.arms)
+            arm.reset();
+        this.recalculate();
     }
 
     /* Add an arm to the spirograph. */
@@ -46,40 +100,13 @@ class Engine {
 
     /* Remove an arm of the spirograph. */
     remove(arm) {
+        if (this.count <= 1)
+            return;
         this.pause();
-        if (this.count <= 1) return;
         let index = this.arms.indexOf(arm);
         this.arms.splice(index, 1);
         this.reset();
         return index;
-    }
-
-    pause() { this.paused = true; }
-    play() { this.paused = false; }
-
-    /* Clear the spirograph. */
-    clear() {
-        this.points = [];
-    }
-
-    /* Recalculate spirograph timing. */
-    recalculate() {
-        let gcds = [];
-        for (let i = 0; i < this.arms.length; i++)
-            gcds[i] = 360 / gcd(Math.abs(this.arms[i].velocity) || 0, 360);
-        this.completion = gcds.reduce(lcm) * this.precision + 1;
-    }
-
-    /* Reset and clear the spirograph. */
-    reset() {
-        this.pause();
-        this.current = 0;
-        this.finished = false;
-        this.clear();
-        this.context.clearRect(0, 0, canvas.width, canvas.height);
-        for (let arm of this.arms)
-            arm.reset();
-        this.recalculate();
     }
 
     drawArms(context, canvas) {
@@ -102,7 +129,7 @@ class Engine {
         context.stroke();
     }
     
-    drawPoints(context, canvas) {
+    drawPoints(context) {
         context.beginPath();
         if (this.points.length <= 1) return;
         let first = this.points[0];
@@ -111,7 +138,15 @@ class Engine {
             context.lineTo(point[0], point[1]);
         context.stroke();
     }
-    
+
+    update() {
+        if (!this.paused) {
+            for (let arm of this.arms)
+                arm.angle += arm.velocity;
+            this.current++;
+        }
+    }
+
     draw() {
         requestAnimationFrame(this.draw.bind(this));
         let canvas = this.canvas;
@@ -121,15 +156,6 @@ class Engine {
         if (!this.finished || this.infinite)
             this.drawArms(context, canvas);
         this.drawPoints(context, canvas);
-    }
-
-    update() {
-        if (!this.paused) {
-            for (let arm of this.arms)
-                arm.angle += arm.velocity;
-        }
-        if (this.current++ >= this.completion)
-            this.finished = true;
     }
 
     start() {

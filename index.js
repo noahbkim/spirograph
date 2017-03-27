@@ -1,4 +1,8 @@
-/* Container for used elements. */
+if (navigator.userAgent.indexOf("Safari") > -1)
+    document.body.classList.add("safari");
+
+
+/* Container for elements. */
 const e = {
     canvas: document.getElementById("canvas"),
     wrapper: document.getElementById("wrapper"),
@@ -10,6 +14,7 @@ const e = {
     add: document.getElementById("add"),
 };
 
+
 /* Bind to menu click. */
 e.menu.addEventListener("click", function() {
     e.wrapper.classList.toggle("centered");
@@ -17,8 +22,12 @@ e.menu.addEventListener("click", function() {
     e.menu.classList.toggle("centered");
 });
 
+
+/* Instantiate the engine. */
 const engine = new Engine(e.canvas);
 
+
+/* Arm functionality. */
 function addArm(arm) {
     engine.add(arm);
     e.arms.insertBefore(armToHTML(arm, engine.count), e.arms.lastElementChild);
@@ -30,6 +39,7 @@ function removeArm(arm) {
     e.arms.removeChild(e.arms.children[index]);
     engine.play();
 }
+
 
 /* Create HTML controls for single arm. */
 function armToHTML(arm, number) {
@@ -79,9 +89,7 @@ function armToHTML(arm, number) {
     lengthValue.innerHTML = arm.length;
     lengthLabel.appendChild(lengthValue);
     let lengthInput = document.createElement("input");
-    lengthInput.type = "range";
-    lengthInput.min = "5";
-    lengthInput.max = "50";
+    lengthInput.type = "number";
     lengthInput.step = "1";
     lengthInput.value = arm.length;
     controls.appendChild(lengthInput);
@@ -102,10 +110,8 @@ function armToHTML(arm, number) {
     velocityValue.innerHTML = arm.velocity;
     velocityLabel.appendChild(velocityValue);
     let velocityInput = document.createElement("input");
-    velocityInput.type = "range";
-    velocityInput.min = "-15";
-    velocityInput.max = "15";
-    velocityInput.step = "0.1";
+    velocityInput.type = "number";
+    velocityInput.step = "0.001";
     velocityInput.value = arm.velocity;
     velocityInput.addEventListener("input", function() {
         velocityValue.innerHTML = this.value;
@@ -123,7 +129,7 @@ function armToHTML(arm, number) {
 }
 
 e.independent.addEventListener("change", function() {
-    engine.indpendent = this.checked;
+    engine.independent = this.checked;
     engine.reset();
     engine.play();
 });

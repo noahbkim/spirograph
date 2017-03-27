@@ -15,6 +15,7 @@ const e = {
     mode: document.getElementById("mode"),
     text: document.getElementById("text"),
     editor: document.getElementById("editor"),
+    randomize: document.getElementById("randomize"),
 };
 
 
@@ -28,7 +29,10 @@ function updateJSON() {
 }
 
 function updateHTML() {
-
+    while (e.arms.getChildren().length() > 1)
+        e.arms.removeChild(e.arms.firstChild);
+    for (let i = 0; i < engine.count; i++)
+        e.arms.appendChild(armToHTML(engine.arms[i], i+1));
 }
 
 /* Create HTML controls for single arm. */
@@ -41,10 +45,11 @@ function armToHTML(arm, number) {
     header.innerHTML += "Arm " + number + "&nbsp;";
     let summary = document.createElement("span");
     summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
+    header.classList.add("header");
     header.appendChild(summary);
     div.appendChild(header);
 
-    div.updateSummary = function() {
+    let updateSummary = function() {
         summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
     };
 
@@ -71,12 +76,21 @@ function armToHTML(arm, number) {
     }
 
     let controls = document.createElement("div");
-    controls.classList.add("controls");
+    controls.classList.add("controls", "closed");
     div.appendChild(controls);
 
-    dropdown.addEventListener("click", function() {
-        this.classList.toggle("closed");
+    let toggleControls = function() {
+        dropdown.classList.toggle("closed");
         controls.classList.toggle("closed");
+    };
+
+    dropdown.addEventListener("click", function() {
+        toggleControls();
+    });
+    header.addEventListener("click", function(e) {
+        if (e.target !== this && e.target !== summary)
+            return;
+        toggleControls();
     });
 
     let lengthContainer = document.createElement("div");
@@ -93,7 +107,7 @@ function armToHTML(arm, number) {
         arm.length = parseInt(this.value);
         engine.reset();
         engine.play();
-        div.updateSummary();
+        updateSummary();
     });
 
     let velocityContainer = document.createElement("div");
@@ -115,14 +129,8 @@ function armToHTML(arm, number) {
 
     randomize.addEventListener("click", function() {
         randomizeArm(arm);
-        lengthInput.value = arm.length;
-        velocityInput.value = arm.velocity;
-        div.updateSummary();
+        updateSummary();
     });
-
-    header.classList.add("header");
-
-    arm.control = div;
 
     return div;
 }
@@ -148,6 +156,11 @@ function randomizeArm(arm) {
     randomizeArmValues(arm);
     engine.reset();
     engine.play();
+    if (arm.control) {
+        arm.control.updateSummary();
+        arm.control.lengthInput.value = arm.length;
+        arm.control.velocityInput.value = arm.velocity;
+    }
     updateJSON();
 }
 
@@ -155,10 +168,6 @@ function randomizeArmValues(arm) {
     arm.length = Math.floor(Math.random() * 55) + 5;
     arm.velocity = Math.floor(Math.random() * 40) / 4 - 5;
     return arm;
-}
-
-function engineToHTML() {
-
 }
 
 
@@ -183,6 +192,15 @@ e.infinite.checked = engine.infinite;
 
 e.add.addEventListener("click", function() {
     addArm();
+});
+
+e.randomize.addEventListener("click", function() {
+    for (let arm of engine.arms)
+        randomizeArmValues(arm);
+    engine.reset();
+    engine.play();
+    updateJSON();
+    updateHTML();
 });
 
 

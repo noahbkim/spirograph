@@ -58,6 +58,10 @@ body {
     transform: rotateZ(180deg);
 }
 
+#randomize {
+    cursor: pointer;
+}
+
 #controls {
     z-index: 1;
     position: relative;
@@ -117,8 +121,17 @@ span.title select {
     background-color: lightgray;
 }
 
+.arm {
+    padding-bottom: 3px;
+}
+
+#add {
+    cursor: pointer;
+}
+
 .arm .header {
     display: block;
+    cursor: pointer;
 }
 
 .arm .menubar {
@@ -154,11 +167,14 @@ span.title select {
     display: flex;
     overflow: hidden;
     transition: height 0.5s ease;
-    padding-bottom: 3px;
+    height: 44px;
+    max-height: 44px;
 }
 
 .arm .controls div {
     flex-grow: 1;
+    margin-top: 3px;
+    margin-bottom: 2px;
     margin-left: 4px;
 }
 
@@ -180,6 +196,7 @@ span.title select {
 .arm .controls input {
     width: 100%;
     margin: 0;
+    outline: none;
 }
 
 #arms #add {
@@ -197,7 +214,8 @@ span.title select {
     /* TODO: not make this hardcoded. */
     max-width: 290px;
     width: 290px;
-    height: 360px;
+    min-height: 370px;
+    height: 370px;
     font-family: Menlo, monospace;
     border: none;
     outline: none;
@@ -206,14 +224,22 @@ span.title select {
 
 input[type="button"] {
     margin-top: 8px;
-    margin-left: 5px;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: 5px;
     padding: 4px 14px;
     font-size: 12px;
     border-radius: 4px;
     border: none;
     color: white;
+    background-color: darkgray;
+}
+
+input[type="button"]:disabled {
     background-color: lightgray;
+}
+
+input[type="button"]:active {
+    background-color: gray;
 }
 
 span.settings {

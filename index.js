@@ -243,7 +243,6 @@ e.independent.checked = engine.independent;
 
 e.infinite.addEventListener("change", function() {
     engine.infinite = this.checked;
-    updateJSON();
 });
 e.infinite.checked = engine.infinite;
 

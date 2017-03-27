@@ -179,7 +179,7 @@ class Engine {
         let arms = [];
         for (let arm of this.arms)
             arms.push(arm.toJSON());
-        return {arms: arms, independent: this.independent, infinite: this.infinite}
+        return {arms: arms, independent: this.independent}
     }
 
 }

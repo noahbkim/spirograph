@@ -24,6 +24,10 @@ class Arm {
         this.angle = 0;
     }
 
+    toJSON() {
+        return {length: this.length, velocity: this.velocity, start: this.start}
+    }
+
 }
 
 class Engine {
@@ -162,5 +166,12 @@ class Engine {
         this.draw();
         //setInterval(this.update.bind(this), 1000 / 60);
     }
-    
+
+    toJSON() {
+        let arms = [];
+        for (let arm of this.arms)
+            arms.push(arm.toJSON());
+        return {arms: arms, independent: this.independent, infinite: this.infinite}
+    }
+
 }

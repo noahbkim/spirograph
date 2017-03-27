@@ -12,34 +12,24 @@ const e = {
     independent: document.getElementById("independent"),
     infinite: document.getElementById("infinite"),
     add: document.getElementById("add"),
+    mode: document.getElementById("mode"),
+    text: document.getElementById("text"),
+    editor: document.getElementById("editor"),
 };
 
-
-/* Bind to menu click. */
-e.menu.addEventListener("click", function() {
-    e.wrapper.classList.toggle("centered");
-    e.controls.classList.toggle("centered");
-    e.menu.classList.toggle("centered");
-});
 
 
 /* Instantiate the engine. */
 const engine = new Engine(e.canvas);
 
 
-/* Arm functionality. */
-function addArm(arm) {
-    engine.add(arm);
-    e.arms.insertBefore(armToHTML(arm, engine.count), e.arms.lastElementChild);
-    engine.play();
+function updateJSON() {
+    e.editor.innerHTML = JSON.stringify(engine.toJSON(), null, 2);
 }
 
-function removeArm(arm) {
-    let index = engine.remove(arm);
-    e.arms.removeChild(e.arms.children[index]);
-    engine.play();
-}
+function updateHTML() {
 
+}
 
 /* Create HTML controls for single arm. */
 function armToHTML(arm, number) {
@@ -54,18 +44,26 @@ function armToHTML(arm, number) {
     header.appendChild(summary);
     div.appendChild(header);
 
+    div.updateSummary = function() {
+        summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
+    };
+
     let menubar = document.createElement("span");
     menubar.classList.add("menubar", "right");
     header.appendChild(menubar);
+    let randomize = document.createElement("span");
+    randomize.classList.add("randomize");
+    randomize.innerHTML = "&#x21cc;";
+    menubar.appendChild(randomize);
     let dropdown = document.createElement("span");
     dropdown.classList.add("dropdown");
-    dropdown.innerHTML = "&#x276C;";
+    dropdown.innerHTML = "&#x25b3;";
     menubar.appendChild(dropdown);
 
     if (number > 1) {
         let remove = document.createElement("span");
         remove.classList.add("remove");
-        remove.innerHTML = "&#x2a09;";
+        remove.innerHTML = "&#x2613;";
         menubar.appendChild(remove);
         remove.addEventListener("click", function() {
             removeArm(arm);
@@ -76,57 +74,100 @@ function armToHTML(arm, number) {
     controls.classList.add("controls");
     div.appendChild(controls);
 
-    dropdown.controls = controls;
     dropdown.addEventListener("click", function() {
         this.classList.toggle("closed");
-        this.controls.classList.toggle("closed");
+        controls.classList.toggle("closed");
     });
 
+    let lengthContainer = document.createElement("div");
+    controls.appendChild(lengthContainer);
     let lengthLabel = document.createElement("label");
-    lengthLabel.innerHTML = "Length: ";
-    controls.appendChild(lengthLabel);
-    let lengthValue = document.createElement("span");
-    lengthValue.innerHTML = arm.length;
-    lengthLabel.appendChild(lengthValue);
+    lengthLabel.innerHTML = "Length";
+    lengthContainer.appendChild(lengthLabel);
     let lengthInput = document.createElement("input");
     lengthInput.type = "number";
     lengthInput.step = "1";
     lengthInput.value = arm.length;
-    controls.appendChild(lengthInput);
-    lengthInput.addEventListener("input", function() {
-        lengthValue.innerHTML = this.value;
-    });
+    lengthContainer.appendChild(lengthInput);
     lengthInput.addEventListener("change", function() {
         arm.length = parseInt(this.value);
         engine.reset();
         engine.play();
-        summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
+        div.updateSummary();
     });
 
+    let velocityContainer = document.createElement("div");
+    controls.appendChild(velocityContainer);
     let velocityLabel = document.createElement("label");
-    velocityLabel.innerHTML = "Velocity: ";
-    controls.appendChild(velocityLabel);
-    let velocityValue = document.createElement("span");
-    velocityValue.innerHTML = arm.velocity;
-    velocityLabel.appendChild(velocityValue);
+    velocityLabel.innerHTML = "Velocity";
+    velocityContainer.appendChild(velocityLabel);
     let velocityInput = document.createElement("input");
     velocityInput.type = "number";
     velocityInput.step = "0.001";
     velocityInput.value = arm.velocity;
-    velocityInput.addEventListener("input", function() {
-        velocityValue.innerHTML = this.value;
-    });
     velocityInput.addEventListener("change", function() {
         arm.velocity = parseFloat(this.value);
         engine.reset();
         engine.play();
-        summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
+        div.updateSummary();
     });
-    controls.appendChild(velocityInput);
+    velocityContainer.appendChild(velocityInput);
+
+    randomize.addEventListener("click", function() {
+        randomizeArm(arm);
+        lengthInput.value = arm.length;
+        velocityInput.value = arm.velocity;
+        div.updateSummary();
+    });
 
     header.classList.add("header");
+
+    arm.control = div;
+
     return div;
 }
+
+
+/* Arm functionality. */
+function addArm(arm) {
+    arm = arm || randomizeArmValues(new Arm());
+    engine.add(arm);
+    e.arms.insertBefore(armToHTML(arm, engine.count), e.arms.lastElementChild);
+    engine.play();
+    updateJSON();
+}
+
+function removeArm(arm) {
+    let index = engine.remove(arm);
+    e.arms.removeChild(e.arms.children[index]);
+    engine.play();
+    updateJSON();
+}
+
+function randomizeArm(arm) {
+    randomizeArmValues(arm);
+    engine.reset();
+    engine.play();
+    updateJSON();
+}
+
+function randomizeArmValues(arm) {
+    arm.length = Math.floor(Math.random() * 55) + 5;
+    arm.velocity = Math.floor(Math.random() * 40) / 4 - 5;
+    return arm;
+}
+
+function engineToHTML() {
+
+}
+
+
+/* Bind to menu click. */
+e.menu.addEventListener("click", function() {
+    e.wrapper.classList.toggle("centered");
+    e.controls.classList.toggle("centered");
+    e.menu.classList.toggle("centered");
+});
 
 e.independent.addEventListener("change", function() {
     engine.independent = this.checked;
@@ -141,7 +182,19 @@ e.infinite.addEventListener("change", function() {
 e.infinite.checked = engine.infinite;
 
 e.add.addEventListener("click", function() {
-    addArm(new Arm(20, 0));
+    addArm();
+});
+
+
+e.mode.addEventListener("change", function() {
+    if (this.value == "Default") {
+        e.arms.style.display = "block";
+        e.text.style.display = "none";
+    } else if (this.value == "Text") {
+        e.arms.style.display = "none";
+        e.text.style.display = "block";
+    }
+
 });
 
 
@@ -152,7 +205,6 @@ e.canvas.addEventListener("click", function() {
 
 window.onload = function() {
     engine.start();
-    let arm = new Arm(20, 2.0);
-    addArm(arm);
+    addArm();
     engine.play();
 };

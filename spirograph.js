@@ -21,7 +21,7 @@ class Arm {
     }
 
     reset() {
-        this.angle = 0;
+        this.angle = this.start;
     }
 
     toJSON() {
@@ -43,7 +43,7 @@ class Engine {
         this.points = [];
 
         /* Precision of curve. Higher is more accurate. */
-        this.precision = 2;
+        this.precision = 1;
 
         /* Arm angles are accumulated when dependent. */
         this.independent = true;

@@ -126,6 +126,10 @@ span.title select {
 }
 
 #add {
+    padding: 4px 5px;
+}
+
+#add {
     cursor: pointer;
 }
 
@@ -222,7 +226,12 @@ span.title select {
     border-radius: 4px;
 }
 
-input[type="button"] {
+#error {
+    color: rgb(203, 32, 38);
+    font-size: 14px;
+}
+
+button {
     margin-top: 8px;
     margin-left: 0;
     margin-right: 5px;
@@ -234,11 +243,11 @@ input[type="button"] {
     background-color: darkgray;
 }
 
-input[type="button"]:disabled {
+button:disabled {
     background-color: lightgray;
 }
 
-input[type="button"]:active {
+button:active {
     background-color: gray;
 }
 

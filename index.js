@@ -1,4 +1,6 @@
-if (navigator.userAgent.indexOf("Safari") > -1)
+if (navigator.userAgent.indexOf("Safari") > -1 &&
+    navigator.userAgent.indexOf("Chrome") == -1 &&
+    navigator.userAgent.indexOf("Chromium") == -1)
     document.body.classList.add("safari");
 
 
@@ -16,6 +18,9 @@ const e = {
     text: document.getElementById("text"),
     editor: document.getElementById("editor"),
     randomize: document.getElementById("randomize"),
+    error: document.getElementById("error"),
+    run: document.getElementById("run"),
+    copy: document.getElementById("copy"),
 };
 
 
@@ -25,14 +30,15 @@ const engine = new Engine(e.canvas);
 
 
 function updateJSON() {
-    e.editor.innerHTML = JSON.stringify(engine.toJSON(), null, 2);
+    e.editor.value = JSON.stringify(engine.toJSON(), null, 2);
 }
 
 function updateHTML() {
-    while (e.arms.getChildren().length() > 1)
+    while (e.arms.children.length > 1)
         e.arms.removeChild(e.arms.firstChild);
+    let add = e.arms.firstChild;
     for (let i = 0; i < engine.count; i++)
-        e.arms.appendChild(armToHTML(engine.arms[i], i+1));
+        e.arms.insertBefore(armToHTML(engine.arms[i], i+1), add);
 }
 
 /* Create HTML controls for single arm. */
@@ -108,6 +114,7 @@ function armToHTML(arm, number) {
         engine.reset();
         engine.play();
         updateSummary();
+        updateJSON();
     });
 
     let velocityContainer = document.createElement("div");
@@ -117,21 +124,41 @@ function armToHTML(arm, number) {
     velocityContainer.appendChild(velocityLabel);
     let velocityInput = document.createElement("input");
     velocityInput.type = "number";
-    velocityInput.step = "0.001";
+    velocityInput.step = "0.01";
     velocityInput.value = arm.velocity;
     velocityInput.addEventListener("change", function() {
         arm.velocity = parseFloat(this.value);
         engine.reset();
         engine.play();
-        div.updateSummary();
+        updateSummary();
+        updateJSON();
     });
     velocityContainer.appendChild(velocityInput);
+
+    let startContainer = document.createElement("div");
+    controls.appendChild(startContainer);
+    let startLabel = document.createElement("label");
+    startLabel.innerHTML = "Start angle";
+    startContainer.appendChild(startLabel);
+    let startInput = document.createElement("input");
+    startInput.type = "number";
+    startInput.step = "0.01";
+    startInput.value = arm.start;
+    startInput.addEventListener("change", function() {
+        arm.start = parseFloat(this.value);
+        engine.reset();
+        engine.play();
+        updateSummary();
+        updateJSON();
+    });
+    startContainer.appendChild(startInput);
 
     randomize.addEventListener("click", function() {
         randomizeArm(arm);
         updateSummary();
     });
 
+    arm.updateSummary = updateSummary;
     return div;
 }
 
@@ -156,11 +183,6 @@ function randomizeArm(arm) {
     randomizeArmValues(arm);
     engine.reset();
     engine.play();
-    if (arm.control) {
-        arm.control.updateSummary();
-        arm.control.lengthInput.value = arm.length;
-        arm.control.velocityInput.value = arm.velocity;
-    }
     updateJSON();
 }
 
@@ -168,6 +190,39 @@ function randomizeArmValues(arm) {
     arm.length = Math.floor(Math.random() * 55) + 5;
     arm.velocity = Math.floor(Math.random() * 40) / 4 - 5;
     return arm;
+}
+
+
+function loadJSON() {
+    let json;
+    try {
+        json = JSON.parse(e.editor.value);
+    } catch (exception) {
+        e.error.innerText = "Invalid JSON!";
+        return;
+    }
+    if (json.arms.length < 1) {
+        e.error.innerText = "No arms defined!";
+        return;
+    }
+    engine.pause();
+    engine.independent = e.independent.checked = json.independent == true;
+    engine.infinite = e.infinite.checked = json.infinite == true;
+    engine.arms = [];
+    for (let arm of json.arms) {
+        if (!arm.hasOwnProperty("length")) {
+            e.error.innerText = "Missing arm length!";
+            return;
+        }
+        if (!arm.hasOwnProperty("velocity")) {
+            e.error.innerText = "missing arm velocity!";
+            return;
+        }
+        engine.arms.push(new Arm(arm.length, arm.velocity, arm.start));
+    }
+    updateHTML();
+    engine.reset();
+    engine.play();
 }
 
 
@@ -182,11 +237,13 @@ e.independent.addEventListener("change", function() {
     engine.independent = this.checked;
     engine.reset();
     engine.play();
+    updateJSON();
 });
 e.independent.checked = engine.independent;
 
 e.infinite.addEventListener("change", function() {
     engine.infinite = this.checked;
+    updateJSON();
 });
 e.infinite.checked = engine.infinite;
 
@@ -213,6 +270,16 @@ e.mode.addEventListener("change", function() {
         e.text.style.display = "block";
     }
 
+});
+
+e.run.addEventListener("click", function() {
+    loadJSON();
+});
+
+e.copy.addEventListener("click", function() {
+    e.editor.focus();
+    e.editor.select();
+    document.execCommand("copy");
 });
 
 

@@ -218,8 +218,8 @@ span.title select {
     /* TODO: not make this hardcoded. */
     max-width: 290px;
     width: 290px;
-    min-height: 370px;
-    height: 370px;
+    min-height: 365px;
+    height: 365px;
     font-family: Menlo, monospace;
     border: none;
     outline: none;

@@ -155,6 +155,9 @@ function armToHTML(arm, number) {
 
     randomize.addEventListener("click", function() {
         randomizeArm(arm);
+        lengthInput.value = arm.length;
+        velocityInput.value = arm.velocity;
+        startInput.value = arm.start;
         updateSummary();
     });
 

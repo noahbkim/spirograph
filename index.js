@@ -106,7 +106,7 @@ function armToHTML(arm, number) {
     lengthContainer.appendChild(lengthLabel);
     let lengthInput = document.createElement("input");
     lengthInput.type = "number";
-    lengthInput.step = "1";
+    lengthInput.step = "0.001";
     lengthInput.value = arm.length;
     lengthContainer.appendChild(lengthInput);
     lengthInput.addEventListener("change", function() {
@@ -124,7 +124,7 @@ function armToHTML(arm, number) {
     velocityContainer.appendChild(velocityLabel);
     let velocityInput = document.createElement("input");
     velocityInput.type = "number";
-    velocityInput.step = "0.01";
+    velocityInput.step = "0.001";
     velocityInput.value = arm.velocity;
     velocityInput.addEventListener("change", function() {
         arm.velocity = parseFloat(this.value);
@@ -142,7 +142,7 @@ function armToHTML(arm, number) {
     startContainer.appendChild(startLabel);
     let startInput = document.createElement("input");
     startInput.type = "number";
-    startInput.step = "0.01";
+    startInput.step = "0.001";
     startInput.value = arm.start;
     startInput.addEventListener("change", function() {
         arm.start = parseFloat(this.value);

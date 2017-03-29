@@ -49,7 +49,7 @@ class Engine {
         this.independent = true;
 
         /* Continues rotating without drawing points. */
-        this.infinite = true;
+        this.infinite = false;
 
         /* Whether drawing is paused. */
         this.paused = false;

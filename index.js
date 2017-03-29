@@ -110,7 +110,7 @@ function armToHTML(arm, number) {
     lengthInput.value = arm.length;
     lengthContainer.appendChild(lengthInput);
     lengthInput.addEventListener("change", function() {
-        arm.length = parseInt(this.value);
+        arm.length = parseFloat(this.value);
         engine.reset();
         engine.play();
         updateSummary();

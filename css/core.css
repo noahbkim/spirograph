@@ -1,0 +1,164 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: sans-serif; }
+
+#canvas {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: lightgray;
+  cursor: default; }
+
+#controls {
+  position: absolute;
+  z-index: 2;
+  margin: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  right: 0;
+  max-width: 310px;
+  min-width: 310px;
+  height: calc(100% - 22px);
+  background-color: #eee;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  transition: 1s transform ease; }
+
+#controls span.title, #controls span.settings {
+  display: inline-block; }
+#controls span.title {
+  margin-bottom: 8px; }
+#controls span.title select {
+  margin: 0; }
+#controls .container {
+  flex-grow: 1;
+  overflow-y: scroll;
+  visibility: visible;
+  margin-right: -45px;
+  padding-right: 30px; }
+#controls #arms {
+  visibility: visible;
+  width: 100%; }
+  #controls #arms .arm, #controls #arms #add {
+    margin-bottom: 6px;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: lightgray; }
+  #controls #arms .arm {
+    padding-bottom: 3px; }
+    #controls #arms .arm .header {
+      display: block; }
+    #controls #arms .arm .menubar {
+      vertical-align: top;
+      padding-top: 1px; }
+      #controls #arms .arm .menubar span {
+        display: inline-block;
+        cursor: pointer;
+        margin-top: -4px;
+        margin-left: 6px;
+        font-size: 15px; }
+      #controls #arms .arm .menubar .remove {
+        margin-left: 4px; }
+      #controls #arms .arm .menubar .dropdown {
+        transition: all 0.5s ease; }
+      #controls #arms .arm .menubar .dropdown.closed {
+        transform: rotate(180deg); }
+    #controls #arms .arm .controls {
+      clear: both;
+      display: flex;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      height: 44px;
+      max-height: 44px; }
+      #controls #arms .arm .controls div {
+        margin-top: 4px;
+        flex-grow: 1; }
+      #controls #arms .arm .controls div:first-of-type {
+        margin-left: 0; }
+      #controls #arms .arm .controls div input {
+        display: inline-block;
+        margin-bottom: 6px; }
+    #controls #arms .arm .controls.closed {
+      margin: 0;
+      height: 0; }
+  #controls #arms #add {
+    padding: 4px 5px; }
+  #controls #arms .arm .controls label {
+    display: block;
+    font-size: 14px;
+    padding-left: 1px;
+    margin-bottom: 2px; }
+  #controls #arms .arm .controls input {
+    width: 100%;
+    margin: 0;
+    outline: none; }
+  #controls #arms .arm#add {
+    text-align: center; }
+
+.click {
+  cursor: pointer; }
+
+#text {
+  display: none; }
+
+#editor {
+  float: right;
+  padding: 4px;
+  width: 100%;
+  max-width: 100%;
+  height: 600px;
+  max-height: 600px;
+  font-family: Menlo, monospace;
+  border: none;
+  outline: none;
+  border-radius: 4px; }
+
+#error {
+  color: #cb2026;
+  font-size: 14px; }
+
+button {
+  margin-top: 8px;
+  margin-left: 0;
+  margin-right: 5px;
+  padding: 4px 14px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  color: white;
+  background-color: darkgray; }
+
+button:disabled {
+  background-color: lightgray; }
+
+button:active {
+  background-color: gray; }
+
+span.settings {
+  margin-top: auto;
+  display: block;
+  line-height: 140%;
+  /* font-style: italic; */ }
+
+input[type="checkbox"] {
+  margin-right: 10px; }
+
+div.spacing {
+  padding-bottom: 5px; }
+
+.left {
+  float: left; }
+
+.right {
+  float: right; }
+
+.bottom {
+  bottom: 0; }
+
+/*# sourceMappingURL=core.css.map */

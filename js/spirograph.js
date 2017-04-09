@@ -38,6 +38,10 @@ class Engine {
         this.canvas = canvas;
         this.context = canvas.getContext("2d");
 
+        /* Center position of canvas. */
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
+
         /* Drawing utilities. */
         this.arms = [];
         this.points = [];
@@ -117,20 +121,24 @@ class Engine {
     }
 
     drawArms(context, canvas) {
-        context.beginPath();
-        let x = canvas.width / 2;
-        let y = canvas.height / 2;
-        context.moveTo(x, y);
+        let cx = this.x;
+        let cy = this.y;
+        let x = 0;
+        let y = 0;
         let last = 0;
+        context.beginPath();
+        context.moveTo(cx, cy);
         for (let arm of this.arms) {
             let angle = arm.angle / this.precision;
-            if (!this.independent) angle += last;
-            last = angle;
-            let length = arm.length;
-            x += length * Math.cos(angle * Math.PI / 180);
-            y += length * Math.sin(angle * Math.PI / 180);
-            context.lineTo(x, y);
+            if (!this.independent) {
+                angle += last;
+                last = angle;
+            }
+            x += arm.length * Math.cos(angle * Math.PI / 180);
+            y += arm.length * Math.sin(angle * Math.PI / 180);
+            context.lineTo(cx+x, cy+y);
         }
+        context.stroke();
         if (!this.finished || this.trail) {
             this.points.push([x, y]);
             if (this.trail > 0)
@@ -138,16 +146,17 @@ class Engine {
         } else if (this.trail > 0) {
             this.points.splice(this.trail.length - 1, 1);
         }
-        context.stroke();
     }
     
     drawPoints(context) {
+        let cx = this.x;
+        let cy = this.y;
         context.beginPath();
         if (this.points.length <= 1) return;
         let first = this.points[0];
-        context.moveTo(first[0], first[1]);
+        context.moveTo(cx+first[0], cy+first[1]);
         for (let point of this.points.slice(1))
-            context.lineTo(point[0], point[1]);
+            context.lineTo(cx+point[0], cy+point[1]);
         context.stroke();
     }
 

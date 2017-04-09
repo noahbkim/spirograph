@@ -1,44 +1,38 @@
 <html>
     <head>
         <title>Spirograph - Noah Kim</title>
-        <link rel="stylesheet" type="text/css" href="core.css">
-        <script type="text/javascript" src="spirograph.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <script type="text/javascript" src="js/spirograph.js"></script>
     </head>
     <body>
-        <div id="container">
-            <div id="wrapper">
-                <canvas id="canvas" width="500" height="500"></canvas>
-                <span id="menu">&#x276f;</span>
-            </div>
-            <div id="controls">
-                <span class="title">
-                    Spirograph
-                    <span id="randomize">&#x21cc;</span>
-                    <span class="right">
-                        <select id="mode">
-                            <option>Default</option>
-                            <option>Text</option>
-                        </select>
-                    </span>
+        <canvas id="canvas"></canvas>
+        <div id="controls">
+            <span class="title">
+                Spirograph
+                <span id="randomize" class="click">&#x21cc;</span>
+                <span class="right">
+                    <select id="mode">
+                        <option>Default</option>
+                        <option>Text</option>
+                    </select>
                 </span>
-                <div class="container">
-                    <div id="arms">
-                        <div id="add">+</div>
-                    </div>
-                    <div id="text">
-                        <textarea id="editor"></textarea>
-                        <button type="button" id="run">Run</button>
-                        <button type="button" id="copy">Copy</button>
-                        <button type="button" id="hex">Hex</button>
-                        <span id="error"></span>
-                    </div>
+            </span>
+            <div class="container">
+                <div id="arms">
+                    <div id="add" class="arm click">+</div>
                 </div>
-                <span class="settings bottom">
-                    <input id="independent" type="checkbox">Arms independent<br>
-                    <input id="infinite" type="checkbox">Continue rotating<br>
-                </span>
+                <div id="text">
+                    <textarea id="editor"></textarea>
+                    <button type="button" id="run">Run</button>
+                    <button type="button" id="copy">Copy</button>
+                    <span id="error"></span>
+                </div>
             </div>
+            <span class="settings bottom">
+                <input id="independent" type="checkbox">Arms independent<br>
+                <input id="infinite" type="checkbox">Continue rotating<br>
+            </span>
         </div>
-        <script type="text/javascript" src="index.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
     </body>
 </html>

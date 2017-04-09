@@ -9,7 +9,6 @@ const e = {
     canvas: document.getElementById("canvas"),
     wrapper: document.getElementById("wrapper"),
     controls: document.getElementById("controls"),
-    menu: document.getElementById("menu"),
     arms: document.getElementById("arms"),
     independent: document.getElementById("independent"),
     infinite: document.getElementById("infinite"),
@@ -51,7 +50,7 @@ function armToHTML(arm, number) {
     header.innerHTML += "Arm " + number + "&nbsp;";
     let summary = document.createElement("span");
     summary.innerHTML = "(" + arm.length + ", " + arm.velocity + ")";
-    header.classList.add("header");
+    header.classList.add("header", "click");
     header.appendChild(summary);
     div.appendChild(header);
 
@@ -229,12 +228,18 @@ function loadJSON() {
 }
 
 
-/* Bind to menu click. */
-e.menu.addEventListener("click", function() {
-    e.wrapper.classList.toggle("centered");
-    e.controls.classList.toggle("centered");
-    e.menu.classList.toggle("centered");
-});
+function resize() {
+    e.canvas.width = document.body.clientWidth;
+    e.canvas.height = document.body.clientHeight;
+}
+
+resize();
+engine.x = e.canvas.width / 2;
+engine.y = e.canvas.height / 2;
+
+
+window.addEventListener("resize", function() { resize(); });
+
 
 e.independent.addEventListener("change", function() {
     engine.independent = this.checked;
@@ -285,10 +290,38 @@ e.copy.addEventListener("click", function() {
 });
 
 
-e.canvas.addEventListener("click", function() {
+/*e.canvas.addEventListener("click", function() {
     engine.reset();
     engine.play();
+});*/
+
+
+let dragging = false;
+let dragX = 0, dragY = 0;
+let reset = true;
+e.canvas.addEventListener("mousedown", function(v) {
+    dragging = true;
+    reset = true;
+    dragX = v.clientX;
+    dragY = v.clientY;
 });
+e.canvas.addEventListener("mousemove", function(v) {
+    if (dragging) {
+        engine.x += v.clientX - dragX;
+        engine.y += v.clientY - dragY;
+        dragX = v.clientX;
+        dragY = v.clientY;
+        reset = false;
+    }
+});
+e.canvas.addEventListener("mouseup", function() {
+    dragging = false;
+    if (reset) {
+        engine.reset();
+        engine.play();
+    }
+});
+
 
 window.onload = function() {
     engine.start();

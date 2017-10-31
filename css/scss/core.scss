@@ -63,13 +63,14 @@ body {
     overflow-y: scroll;
     visibility: visible;
     margin-right: -45px;
-    padding-right: 30px;
+    padding-right: 45px;
   }
 
   #arms {
 
     visibility: visible;
     width: 100%;
+    box-sizing: border-box;
 
     .arm, #add {
       margin-bottom: 6px;

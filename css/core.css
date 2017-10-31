@@ -41,10 +41,11 @@ body {
   overflow-y: scroll;
   visibility: visible;
   margin-right: -45px;
-  padding-right: 30px; }
+  padding-right: 45px; }
 #controls #arms {
   visibility: visible;
-  width: 100%; }
+  width: 100%;
+  box-sizing: border-box; }
   #controls #arms .arm, #controls #arms #add {
     margin-bottom: 6px;
     padding: 5px;
